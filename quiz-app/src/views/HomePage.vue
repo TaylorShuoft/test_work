@@ -160,13 +160,13 @@ export default {
     const currentAnnouncement = ref('updates')
 
     const updates = [
-      { date: '2025-4-21', description: '更新！计组IEEE754！' },
+      { date: '2025-5-21', description: '更新！聊天池！' },
     ]
     const alerts = [
-      { date: '2025-4-21', description: '提示！应试教育不要较真！' },
+      { date: '2025-5-21', description: '提示！登陆后再使用！' },
     ]
     const previews = [
-      { date: '2025-4-21', description: '有功能意见QQ联系，支持+功能！' },
+      { date: '2025-5-21', description: '有功能意见直接在聊天池反馈！' },
     ]
 
     const checkIfMobile = () => {

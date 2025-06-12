@@ -117,7 +117,7 @@ export default {
     padding: 20px;
     max-width: 600px;
     margin: 0 auto;
-    height: 88vh;
+    min-height: 100vh; /* Use min-height instead of fixed height for flexibility */
     background: #f4f5f7;
     display: flex;
     flex-direction: column;
@@ -136,24 +136,24 @@ export default {
 
 .chat-container {
     flex: 1;
-    height: calc(50% - 60px);
+    min-height: 200px; /* Ensure minimum height for small screens */
     border: none;
     border-radius: 12px;
     background: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 10px 0;
+    margin: 20px 0 80px; /* Increased bottom margin to avoid overlap with input bar */
     overflow: hidden;
-    position: relative; /* Add relative positioning for absolute button */
+    position: relative;
 }
 
 .chat-list {
-    height: calc(100% - 40px); /* Adjust height to account for button */
+    height: calc(100% - 40px); /* Adjust height for button */
     padding: 15px;
-    padding-top: 45px; /* Add padding to avoid overlap with button */
+    padding-top: 45px; /* Space for more-messages-btn */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     scrollbar-width: thin;
     scrollbar-color: #ccc #f4f5f7;
 }
@@ -213,6 +213,7 @@ export default {
     background: #ffffff;
     border-top: 1px solid #e5e5e5;
     position: fixed;
+    bottom: 0; /* Stick to bottom, adjusted for mobile */
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
@@ -277,5 +278,20 @@ export default {
 
 .more-messages-btn:hover {
     background: #1d4ed8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .chat-pool {
+        padding: 10px;
+    }
+
+    .chat-container {
+        margin-bottom: 120px; /* Extra space for mobile nav and input bar */
+    }
+
+    .chat-input-bar {
+        bottom: 60px; /* Account for BottomNav height */
+    }
 }
 </style>

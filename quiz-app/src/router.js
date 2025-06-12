@@ -15,25 +15,26 @@ const routes = [
   {
     path: '/home',
     name: 'HomePage',
-    component: HomePage
+    component: HomePage,
+    meta: { requiresAuth: false }
   },
   {
     path: '/quiz',
     name: 'Quiz',
     component: Quiz,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }  // 移除答题页面的认证要求
   },
   {
     path: '/files',
     name: 'Files',
     component: FilesPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/counter',
     name: 'Counter',
     component: Counter,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/login',

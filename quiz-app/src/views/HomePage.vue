@@ -160,7 +160,9 @@ export default {
     const currentAnnouncement = ref('updates')
 
     const updates = [
+      { date: '2025-6-02', description: '更新！计组题库！' },
       { date: '2025-5-21', description: '更新！聊天池！' },
+
     ]
     const alerts = [
       { date: '2025-5-21', description: '提示！登陆后再使用！' },
@@ -178,7 +180,6 @@ export default {
       const token = localStorage.getItem('token')
       isLoggedIn.value = !!token
       if (!isLoggedIn.value && !localStorage.getItem('hasVisited')) {
-        showWelcomeDialog.value = true
         localStorage.setItem('hasVisited', 'true')
       }
     }

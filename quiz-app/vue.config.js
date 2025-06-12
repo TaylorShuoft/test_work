@@ -4,9 +4,14 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true
+        target: 'http://139.9.77.58:3000/',  // 替换为你的实际服务器IP
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
       }
     }
-  }
+  },
+  // 生产环境配置
+  publicPath: '/'
 })

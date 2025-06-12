@@ -24,12 +24,22 @@
                 :key="index"
                 class="option-button"
                 :class="{
-                  correct: selectedAnswer === option && isCorrect,
-                  incorrect: selectedAnswer === option && !isCorrect
+                  correct: isCorrect && (Array.isArray(selectedAnswer) ? selectedAnswer.includes(option) : selectedAnswer === option),
+                  incorrect: !isCorrect && (Array.isArray(selectedAnswer) ? selectedAnswer.includes(option) : selectedAnswer === option),
+                  'selected': questionType === '多选' && selectedAnswer && selectedAnswer.includes(option)
                 }"
                 @click="selectAnswer(option)"
               >
                 {{ option }}
+              </button>
+              <!-- 多选题提交按钮 -->
+              <button 
+                v-if="questionType === '多选'" 
+                class="submit-button" 
+                @click="checkAnswer"
+                :disabled="!selectedAnswer || selectedAnswer.length === 0"
+              >
+                提交答案
               </button>
             </template>
             <template v-else>
@@ -109,6 +119,8 @@ export default {
       const type = this.currentQuestion.type;
       if (type === "单选题") {
         return "单选";
+      } else if (type === "多选题") {
+        return "多选";
       } else if (type === "判断题") {
         return "判断";
       } else if (type === "填空题") {
@@ -139,6 +151,7 @@ export default {
       const subjectData = quizData[this.subject];
       this.questions = [
         ...(subjectData["单选题"] || []).map((q) => ({ ...q, type: "单选题" })),
+        ...(subjectData["多选题"] || []).map((q) => ({ ...q, type: "多选题" })),
         ...(subjectData["判断题"] || []).map((q) => ({ ...q, type: "判断题" })),
         ...(subjectData["填空题"] || []).map((q) => ({ ...q, type: "填空题" })),
       ];
@@ -155,8 +168,50 @@ export default {
       if (this.isAnsweringDisabled) return; // 如果作答被禁用，则直接返回
       if (this.isBlurred) return;
 
-      this.selectedAnswer = option;
-      this.isCorrect = option === this.currentQuestion.answer;
+      // 如果是多选题
+      if (this.questionType === '多选') {
+        if (!this.selectedAnswer) {
+          this.selectedAnswer = [];
+        }
+        const index = this.selectedAnswer.indexOf(option);
+        if (index === -1) {
+          this.selectedAnswer.push(option);
+        } else {
+          this.selectedAnswer.splice(index, 1);
+        }
+        // 多选题不自动检查答案，等待用户点击提交
+        return;
+      } else {
+        // 单选题和判断题
+        this.selectedAnswer = option;
+        // 检查答案
+        this.checkAnswer();
+      }
+    },
+    checkAnswer() {
+      if (!this.selectedAnswer) return;
+
+      if (this.questionType === '多选') {
+        // 多选题答案检查
+        const correctAnswers = Array.isArray(this.currentQuestion.answer) 
+          ? this.currentQuestion.answer 
+          : [this.currentQuestion.answer];
+        const selectedAnswers = Array.isArray(this.selectedAnswer) 
+          ? this.selectedAnswer 
+          : [this.selectedAnswer];
+        
+        // 检查是否所有正确答案都被选中，且没有多余的选择
+        this.isCorrect = correctAnswers.length === selectedAnswers.length &&
+          correctAnswers.every(answer => selectedAnswers.includes(answer)) &&
+          selectedAnswers.every(answer => correctAnswers.includes(answer));
+      } else if (this.questionType === '填空') {
+        // 填空题答案检查
+        this.isCorrect = this.userInput.trim() === this.currentQuestion.answer;
+      } else {
+        // 单选题和判断题答案检查
+        this.isCorrect = this.selectedAnswer === this.currentQuestion.answer;
+      }
+
       if (this.isCorrect) {
         this.answers[this.currentQuestionIndex] = "correct";
         this.isAnsweringDisabled = true;
@@ -172,6 +227,7 @@ export default {
         this.isAnsweringDisabled = true; // 禁用作答
 
         setTimeout(() => {
+          this.showCorrectAnswer = false;
           this.isAnsweringDisabled = false;
           this.nextQuestion();
         }, 2000);
@@ -328,15 +384,25 @@ export default {
   text-align: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+}
+
+.option-button.selected {
+  background-color: #666666;
+  color: white;
 }
 
 .option-button.correct {
-  background-color: #007bff;
+  background: #4caf50;
   color: white;
 }
 
 .option-button.incorrect {
-  background-color: #f44336;
+  background: #f44336;
   color: white;
 }
 
